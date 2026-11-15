@@ -1,8 +1,9 @@
 // doTrack service worker: push notifications, and the app itself kept on the device so it opens offline.
 // The page (index.html) always comes from the network when there is one, so a new version shows at once;
-// built files have a hash in their name and never change, so they are served from the cache.
+// built files have a hash in their name and never change, so they are served from the cache; the manifest and the
+// icons come from the network too (a new icon must reach the phone), the saved copy only offline.
 // Data is not cached here: the app keeps its own copy (see lib/store.svelte.js).
-const CACHE = 'dotrack-app-v1';
+const CACHE = 'dotrack-app-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(['/', '/icon.svg', '/manifest.webmanifest'])).catch(() => {}));
@@ -33,7 +34,19 @@ self.addEventListener('fetch', (event) => {
     })());
     return;
   }
-  if (url.pathname.startsWith('/assets/') || /\.(svg|png|webmanifest|woff2)$/.test(url.pathname)) {
+  if (/\.(svg|png|webmanifest)$/.test(url.pathname) && !url.pathname.startsWith('/assets/')) {
+    event.respondWith((async () => {
+      try {
+        const fresh = await fetch(req);
+        if (fresh.ok) (await caches.open(CACHE)).put(req, fresh.clone());
+        return fresh;
+      } catch {
+        return (await caches.match(req)) ?? Response.error();
+      }
+    })());
+    return;
+  }
+  if (url.pathname.startsWith('/assets/') || /\.woff2$/.test(url.pathname)) {
     event.respondWith((async () => {
       const hit = await caches.match(req);
       if (hit) return hit;
