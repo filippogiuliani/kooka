@@ -194,7 +194,7 @@
   async function shareInvite() {
     const text = t('invite.message', { family: family.name });
     if (navigator.share) {
-      try { await navigator.share({ title: 'doTrack', text, url: invite.link }); return; } catch { /* cancelled */ }
+      try { await navigator.share({ title: 'Kooka', text, url: invite.link }); return; } catch { /* cancelled */ }
     }
     try { await navigator.clipboard.writeText(invite.link); toast(t('invite.copied')); } catch { /* the link stays visible */ }
   }
@@ -232,7 +232,7 @@
 {#if family && user}
 <div class="layout">
   {#if app.me.hub}
-  <!-- Managed in weHub -->
+  <!-- Managed in Wombat -->
   <section class="card stack">
     <h2>{t('family.family')}</h2>
     <p><b>{family.name}</b></p>
@@ -481,7 +481,7 @@
         <p class="tiny muted">{t('api.example_ha')}</p>
         <pre class="mono code">sensor:
   - platform: rest
-    name: doTrack oggi
+    name: Kooka oggi
     resource: {apiBase}/summary
     headers:
       Authorization: Bearer dt_…

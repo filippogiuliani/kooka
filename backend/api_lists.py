@@ -167,14 +167,14 @@ def suggestions(list_id):
 
 @bp.post('/lists/<int:list_id>/items')
 def add_many(list_id):
-    """Add several things at once (integrations: eaTrack, Home Assistant, scripts).
+    """Add several things at once (integrations: Wallaby, Home Assistant, scripts).
     items: ["latte", "2 kg mele", {"title": "pane", "quantity": "1"}]. What is already on the list (not ticked) is skipped."""
     added, skipped = add_entries(list_id, body().get('items'))
     return jsonify(added=added, skipped=skipped), 201
 
 
 def checklists(conn):
-    """The lists other apps may add to (eaTrack's menu → shopping): open checklists, no templates."""
+    """The lists other apps may add to (Wallaby's menu → shopping): open checklists, no templates."""
     return [{'id': x['id'], 'name': x['name']} for x in _lists(conn)
             if x['kind'] == 'checklist' and not x['archived'] and not x['template']]
 

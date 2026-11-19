@@ -115,9 +115,9 @@ def build_ics(conn, feed, lang):
         checks.setdefault(r['item_id'], []).append(r['text'])
 
     now = _stamp(datetime.datetime.now(datetime.timezone.utc))
-    host = (BASE_URL or request.host_url).split('://')[-1].strip('/').split('/')[0].split(':')[0] or 'dotrack'
-    lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//doTrack//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
-             f'X-WR-CALNAME:{_escape("doTrack – " + (family["name"] if family else ""))}',
+    host = (BASE_URL or request.host_url).split('://')[-1].strip('/').split('/')[0].split(':')[0] or 'kooka'
+    lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kooka//IT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+             f'X-WR-CALNAME:{_escape("Kooka – " + (family["name"] if family else ""))}',
              'X-PUBLISHED-TTL:PT1H', 'REFRESH-INTERVAL;VALUE=DURATION:PT1H']
     for it in items:
         summary = it['title']
@@ -180,6 +180,6 @@ def ical(token):
             abort(404, 'Calendar not found')
         ics = build_ics(conn, feed, feed['language'])
     resp = Response(ics, mimetype='text/calendar')
-    resp.headers['Content-Disposition'] = 'inline; filename="dotrack.ics"'
+    resp.headers['Content-Disposition'] = 'inline; filename="kooka.ics"'
     resp.headers['Cache-Control'] = 'no-cache'
     return resp

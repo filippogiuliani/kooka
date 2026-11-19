@@ -15,8 +15,8 @@
   let month = $state(today().slice(0, 7) + '-01');
   let selected = $state(today());
   const VIEWS = ['month', 'week', 'day'];
-  let view = $state((() => { try { return VIEWS.includes(localStorage.getItem('dotrack.calview')) ? localStorage.getItem('dotrack.calview') : 'month'; } catch { return 'month'; } })());
-  $effect(() => { try { localStorage.setItem('dotrack.calview', view); } catch { /* ignore */ } });
+  let view = $state((() => { try { return VIEWS.includes(localStorage.getItem('kooka.calview')) ? localStorage.getItem('kooka.calview') : 'month'; } catch { return 'month'; } })());
+  $effect(() => { try { localStorage.setItem('kooka.calview', view); } catch { /* ignore */ } });
   let narrow = $state(window.matchMedia('(max-width: 699px)').matches);
   $effect(() => {
     const mq = window.matchMedia('(max-width: 699px)');

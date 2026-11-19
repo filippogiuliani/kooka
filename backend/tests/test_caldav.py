@@ -91,8 +91,8 @@ def test_discovery(client, family):
     assert home == f'/dav/calendars/{dav.uid}/'
     cals = dav.multistatus('PROPFIND', home, PROPFIND_ALL)
     names = {href: p[D + 'displayname'].text for href, p in cals.items() if href != home}
-    assert sorted(names.values()) == ['Spesa', 'doTrack']
-    coll = next(h for h, n in names.items() if n == 'doTrack')
+    assert sorted(names.values()) == ['Kooka', 'Spesa']
+    coll = next(h for h, n in names.items() if n == 'Kooka')
     props = cals[coll]
     assert props[D + 'resourcetype'].find(C + 'calendar') is not None
     assert {x.get('name') for x in props[C + 'supported-calendar-component-set']} == {'VTODO', 'VEVENT'}

@@ -7,13 +7,13 @@
   /** Filters saved on this device, per page */
   export function loadFilters(key) {
     try {
-      const saved = JSON.parse(localStorage.getItem('dotrack.filters.' + key) ?? 'null');
+      const saved = JSON.parse(localStorage.getItem('kooka.filters.' + key) ?? 'null');
       if (saved && typeof saved === 'object') return { ...emptyFilters(), ...saved, q: '' };
     } catch { /* storage unavailable or invalid */ }
     return emptyFilters();
   }
   export function saveFilters(key, f) {
-    try { localStorage.setItem('dotrack.filters.' + key, JSON.stringify({ ...f, q: '' })); } catch { /* ignore */ }
+    try { localStorage.setItem('kooka.filters.' + key, JSON.stringify({ ...f, q: '' })); } catch { /* ignore */ }
   }
 
   export const activeCount = (f) => f.kinds.length + f.categories.length + f.labels.length + (f.priority === null ? 0 : 1);

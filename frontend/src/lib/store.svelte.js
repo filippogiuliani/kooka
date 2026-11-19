@@ -22,7 +22,7 @@ export const app = $state({
 });
 
 // ---------- Copy on the device ----------
-const CACHE = 'dotrack.cache';
+const CACHE = 'kooka.cache';
 function cacheKey() { return `${CACHE}.${app.me?.user?.id ?? 0}.${app.me?.family?.id ?? 0}`; }
 export function saveCache() {
   try {

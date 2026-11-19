@@ -19,11 +19,11 @@ from common import body, text
 
 bp = Blueprint('auth', __name__)
 
-# DOTRACK_SIGNUP=closed: new accounts only through an invitation link.
-SIGNUP_OPEN = os.environ.get('DOTRACK_SIGNUP', 'open') != 'closed'
-# DOTRACK_PASSWORD_LOGIN=0: sign-in and sign-up only through the OIDC providers
-PASSWORD_LOGIN = os.environ.get('DOTRACK_PASSWORD_LOGIN', '1') not in ('0', 'off', 'false', 'no') and not hub.enabled()
-BASE_URL = os.environ.get('DOTRACK_URL', '').rstrip('/')
+# KOOKA_SIGNUP=closed: new accounts only through an invitation link.
+SIGNUP_OPEN = os.environ.get('KOOKA_SIGNUP', 'open') != 'closed'
+# KOOKA_PASSWORD_LOGIN=0: sign-in and sign-up only through the OIDC providers
+PASSWORD_LOGIN = os.environ.get('KOOKA_PASSWORD_LOGIN', '1') not in ('0', 'off', 'false', 'no') and not hub.enabled()
+BASE_URL = os.environ.get('KOOKA_URL', '').rstrip('/')
 EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 PASSWORD_MIN = 8
 NO_PASSWORD = '!'  # account created through an external provider, without a password

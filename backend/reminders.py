@@ -11,7 +11,7 @@ from famkit import mail
 import notify
 from common import next_birthday
 
-HOUR = int(os.environ.get('DOTRACK_REMINDER_HOUR', '8'))
+HOUR = int(os.environ.get('KOOKA_REMINDER_HOUR', '8'))
 
 
 def _line(it, lang, names, people, due, age=None):
@@ -76,9 +76,9 @@ def digest(conn, user, today):
         body.append(BASE_URL + '/')
     body.append(i18n.tr('You can turn off these emails in the Family page of the app.', lang))
     n = len(sections['today']) + len(sections['soon'])
-    subject = i18n.tr('doTrack: {n} things to remember', lang, n=n) if n != 1 else i18n.tr('doTrack: 1 thing to remember', lang)
+    subject = i18n.tr('Kooka: {n} things to remember', lang, n=n) if n != 1 else i18n.tr('Kooka: 1 thing to remember', lang)
     if not n:
-        subject = i18n.tr('doTrack: overdue items', lang)
+        subject = i18n.tr('Kooka: overdue items', lang)
     return subject, '\n'.join(body)
 
 

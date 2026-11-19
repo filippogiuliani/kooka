@@ -72,7 +72,7 @@ def test_daily_reminders(family, outbox):
     assert reminders.run_once(today) == 2
     mails = {to: (subject, body) for to, subject, body in outbox}
     subject, body = mails['fil@example.com']
-    assert subject == 'doTrack: 2 cose da ricordare'
+    assert subject == 'Kooka: 2 cose da ricordare'
     assert 'Pediatra' in body and '10/11/2026 10:30' in body and 'Assicurazione (Panda)' in body
     assert 'Lontano' not in body and 'Di Sara' not in body
     sara = mails['sara@example.com'][1]

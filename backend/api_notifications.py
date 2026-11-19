@@ -89,5 +89,5 @@ def test_push():
     with db.transaction() as conn:
         if not conn.execute('SELECT 1 FROM push_subscriptions WHERE user_id = ?', (g.user['id'],)).fetchone():
             abort(400, 'No device with notifications turned on')
-    notify.deliver(g.user['id'], {'title': 'doTrack', 'body': i18n.tr('Notifications are working.'), 'url': '/#/agenda', 'tag': 'test'})
+    notify.deliver(g.user['id'], {'title': 'Kooka', 'body': i18n.tr('Notifications are working.'), 'url': '/#/agenda', 'tag': 'test'})
     return jsonify(ok=True)

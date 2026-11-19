@@ -6,7 +6,7 @@ import { t } from './i18n.svelte.js';
 import { app, findItem, loadItems, removeItem, showError, toast, upsert } from './store.svelte.js';
 import { fmtDayMonth, today } from './date.js';
 
-const KEY = 'dotrack.outbox';
+const KEY = 'kooka.outbox';
 let queue = [];
 try { queue = JSON.parse(localStorage.getItem(KEY) ?? '[]'); } catch { queue = []; }
 app.pending = queue.length;

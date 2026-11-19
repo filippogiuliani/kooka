@@ -4,8 +4,11 @@ import sqlite3
 import sys
 from contextlib import contextmanager
 
-DATA_DIR = os.environ.get('DOTRACK_DATA', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'))
-DB_PATH = os.path.join(DATA_DIR, 'dotrack.db')
+from famkit import legacy   # first: variables with the old names (DOTRACK_*) still work for a while
+
+DATA_DIR = os.environ.get('KOOKA_DATA', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'))
+DB_PATH = os.path.join(DATA_DIR, 'kooka.db')
+legacy.move_file(os.path.join(DATA_DIR, 'dotrack.db'), DB_PATH)   # the app was doTrack until 2026-11
 
 SCHEMA_VERSION = 4
 
@@ -226,7 +229,7 @@ CREATE TABLE IF NOT EXISTS list_history (
     last_used TEXT NOT NULL DEFAULT (datetime('now')),
     PRIMARY KEY (list_id, key)
 );
--- Personal API tokens (integrations: Home Assistant, eaTrack, scripts): only the hash is stored
+-- Personal API tokens (integrations: Home Assistant, Wallaby, scripts): only the hash is stored
 CREATE TABLE IF NOT EXISTS api_tokens (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -314,12 +317,12 @@ ADDED_COLUMNS = [
     ('families', 'version', 'INTEGER NOT NULL DEFAULT 0'),  # bumped on every change: clients poll it
     ('users', 'totp_secret', 'TEXT'),               # two-step verification (TOTP), NULL = off
     ('users', 'totp_pending', 'TEXT'),              # secret being set up, not confirmed yet
-    ('families', 'hub_id', 'INTEGER'),              # the family in weHub (see famkit/hub.py), NULL = not managed there
-    ('families', 'hub_version', 'INTEGER'),         # weHub version last copied
+    ('families', 'hub_id', 'INTEGER'),              # the family in Wombat (see famkit/hub.py), NULL = not managed there
+    ('families', 'hub_version', 'INTEGER'),         # Wombat version last copied
     ('users', 'hub_id', 'INTEGER'),
     ('people', 'hub_id', 'INTEGER'),
-    ('items', 'ext_ref', 'TEXT'),                   # kept in step by another family app, e.g. "patrack-12" (hub_hooks.py)
-    ('items', 'ext_url', 'TEXT'),                   # where that app shows it (the paTrack document)
+    ('items', 'ext_ref', 'TEXT'),                   # kept in step by another family app, e.g. "pelican-12" (hub_hooks.py)
+    ('items', 'ext_url', 'TEXT'),                   # where that app shows it (the Pelican document)
 ]
 
 
@@ -334,8 +337,11 @@ def init_db():
     os.makedirs(DATA_DIR, exist_ok=True)
     conn = connect()
     try:
+        legacy.rename_schema(conn)
         conn.executescript(SCHEMA)
         _migrate(conn)
+        # deadlines kept in step by the documents app: it was paTrack ("patrack-12"), it is Pelican now
+        conn.execute("UPDATE items SET ext_ref = 'pelican-' || substr(ext_ref, 9) WHERE ext_ref LIKE 'patrack-%'")
         conn.execute('CREATE INDEX IF NOT EXISTS idx_items_list ON items(list_id)')
         conn.execute('CREATE INDEX IF NOT EXISTS idx_items_deleted ON items(family_id, deleted_at)')
         conn.execute('CREATE UNIQUE INDEX IF NOT EXISTS idx_items_caldav_name ON items(family_id, caldav_name)')
@@ -349,6 +355,6 @@ def init_db():
         conn.close()
 
 
-# The shared code (famkit: mail, backups, weHub link, sign-in) reads DOTRACK_* variables and uses this module
+# The shared code (famkit: mail, backups, Wombat link, sign-in) reads KOOKA_* variables and uses this module
 import famkit  # noqa: E402
-famkit.configure('DOTRACK', 'doTrack', sys.modules[__name__])
+famkit.configure('KOOKA', 'Kooka', sys.modules[__name__])

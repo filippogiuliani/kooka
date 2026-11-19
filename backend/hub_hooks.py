@@ -1,4 +1,4 @@
-"""doTrack's part of the weHub link (the rest is famkit.hub): who this app's people are, what happens when a
+"""Kooka's part of the Wombat link (the rest is famkit.hub): who this app's people are, what happens when a
 member leaves, how two families made separately are merged. Registered in app.py with hub.use(hub_hooks)."""
 import re
 
@@ -16,7 +16,7 @@ def bump(conn, family_id):
 
 
 def apply_people(conn, family_id, snap):
-    """weHub people who are not doTrack members become doTrack "people" (kids, grandparents, the babysitter…)."""
+    """Wombat people who are not Kooka members become Kooka "people" (kids, grandparents, the babysitter…)."""
     member_hub_ids = {m['hub_id'] for m in snap['members']}
     wanted = [p for p in snap['people'] if p.get('user_hub_id') not in member_hub_ids or p.get('user_hub_id') is None]
     seen = set()
@@ -35,7 +35,7 @@ def apply_people(conn, family_id, snap):
                                   (family_id, p['name'], p['hub_id'])).lastrowid)
     for (pid,) in conn.execute('SELECT id FROM people WHERE family_id = ? AND hub_id IS NOT NULL', (family_id,)).fetchall():
         if pid not in seen:
-            # Removed in weHub: their things go back to "anyone"
+            # Removed in Wombat: their things go back to "anyone"
             conn.execute('UPDATE items SET person_id = NULL WHERE person_id = ?', (pid,))
             conn.execute('DELETE FROM people WHERE id = ?', (pid,))
 
@@ -52,7 +52,7 @@ def on_member_removed(conn, family_id, user_id):
 
 
 def merge_data(conn, src, dst, report):
-    """doTrack: people and labels with the same name become one; lists, to-dos, notifications and keys move."""
+    """Kooka: people and labels with the same name become one; lists, to-dos, notifications and keys move."""
     for p in conn.execute('SELECT id, name FROM people WHERE family_id = ?', (src,)).fetchall():
         t = conn.execute('SELECT id FROM people WHERE family_id = ? AND name = ? COLLATE NOCASE', (dst, p['name'])).fetchone()
         if t:
@@ -80,12 +80,12 @@ def merge_data(conn, src, dst, report):
 
 
 # ======================================================================
-# For the other family apps, through weHub (see famkit.hub.service)
+# For the other family apps, through Wombat (see famkit.hub.service)
 # ======================================================================
 
 @hub.service('/lists')
 def service_lists():
-    """eaTrack: the family's shopping lists (to send the weekly menu's foods)."""
+    """Wallaby: the family's shopping lists (to send the weekly menu's foods)."""
     from api_lists import checklists
     with db.transaction() as conn:
         return jsonify(checklists(conn))
@@ -99,18 +99,18 @@ def service_add_items(list_id):
     return jsonify(added=added, skipped=skipped), 201
 
 
-# ---------- paTrack: deadlines of documents (identity card, licence, warranty…) ----------
-# paTrack decides: when someone asks for it on a document with an expiry date, paTrack puts the deadline here and keeps
-# it in step (date, reminder, who it is about, link to the document). What people add in doTrack (labels, notes,
-# priority, a repetition) stays. A deadline deleted here is not created again: paTrack is told and stops.
+# ---------- Pelican: deadlines of documents (identity card, licence, warranty…) ----------
+# Pelican decides: when someone asks for it on a document with an expiry date, Pelican puts the deadline here and keeps
+# it in step (date, reminder, who it is about, link to the document). What people add in Kooka (labels, notes,
+# priority, a repetition) stays. A deadline deleted here is not created again: Pelican is told and stops.
 
-PATRACK_CATEGORIES = {'identity': 'documents', 'health': 'health', 'child': 'kids', 'home': 'home', 'car': 'car',
+PELICAN_CATEGORIES = {'identity': 'documents', 'health': 'health', 'child': 'kids', 'home': 'home', 'car': 'car',
                       'tax': 'money', 'work': 'work', 'purchases': 'documents', 'bank': 'money', 'insurance': 'money'}
-REF = re.compile(r'patrack-\d+')
+REF = re.compile(r'pelican-\d+')
 
 
 def in_charge(conn, d):
-    """(assignee_id, person_id) from the weHub ids another app sends: a member, or a person without an account."""
+    """(assignee_id, person_id) from the Wombat ids another app sends: a member, or a person without an account."""
     if d.get('member_hub_id'):
         r = conn.execute('SELECT u.id FROM users u JOIN members m ON m.user_id = u.id AND m.family_id = ? WHERE u.hub_id = ?',
                          (g.family_id, d['member_hub_id'])).fetchone()
@@ -149,7 +149,7 @@ def put_deadline(ref):
     with db.transaction() as conn:
         assignee_id, person_id = in_charge(conn, d)
         wanted = {'kind': 'deadline', 'title': d.get('title'), 'due_date': d.get('due_date'), 'remind_days': d.get('remind_days'),
-                  'category': PATRACK_CATEGORIES.get(d.get('category'), 'documents'), 'notes': d.get('notes') or '',
+                  'category': PELICAN_CATEGORIES.get(d.get('category'), 'documents'), 'notes': d.get('notes') or '',
                   'assignee_id': assignee_id, 'person_id': person_id}
         if not wanted['due_date']:
             abort(400, 'A date is required')
@@ -190,7 +190,7 @@ def delete_deadline(ref):
     return jsonify(ok=True)
 
 
-# ---------- weHub's home: what is coming up ----------
+# ---------- Wombat's home: what is coming up ----------
 
 @hub.service('/summary')
 def summary():

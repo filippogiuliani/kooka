@@ -5,10 +5,10 @@ import re
 import sys
 import tempfile
 
-# Modules read DOTRACK_DATA on import: point it at a throwaway directory right away,
+# Modules read KOOKA_DATA on import: point it at a throwaway directory right away,
 # so no test can ever touch backend/data or a real data directory.
-os.environ['DOTRACK_DATA'] = tempfile.mkdtemp(prefix='dotrack-test-')
-for k in [k for k in os.environ if k.startswith('DOTRACK_') and k != 'DOTRACK_DATA']:
+os.environ['KOOKA_DATA'] = tempfile.mkdtemp(prefix='kooka-test-')
+for k in [k for k in os.environ if k.startswith('KOOKA_') and k != 'KOOKA_DATA']:
     del os.environ[k]
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -44,7 +44,7 @@ def pushes(monkeypatch):
 @pytest.fixture
 def app(tmp_path, monkeypatch, outbox, pushes):
     monkeypatch.setattr(db, 'DATA_DIR', str(tmp_path))
-    monkeypatch.setattr(db, 'DB_PATH', str(tmp_path / 'dotrack.db'))
+    monkeypatch.setattr(db, 'DB_PATH', str(tmp_path / 'kooka.db'))
     monkeypatch.setattr(backup, 'BACKUP_DIR', str(tmp_path / 'backups'))
     monkeypatch.setattr(auth, 'SIGNUP_OPEN', True)
     monkeypatch.setattr(oidc, 'PROVIDERS', {})

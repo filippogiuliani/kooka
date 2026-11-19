@@ -26,9 +26,9 @@ def language():
 
 
 IT = {
-    'The family is managed in weHub': 'La famiglia si gestisce in weHub',
-    'You cannot use this app: ask the family admin in weHub': "Non puoi usare quest'app: chiedi all'amministratore della famiglia in weHub",
-    'weHub is not reachable, please try again in a moment': 'weHub non è raggiungibile, riprova tra poco',
+    'The family is managed in Wombat': 'La famiglia si gestisce in Wombat',
+    'You cannot use this app: ask the family admin in Wombat': "Non puoi usare quest'app: chiedi all'amministratore della famiglia in Wombat",
+    'Wombat is not reachable, please try again in a moment': 'Wombat non è raggiungibile, riprova tra poco',
     'To sign up you must accept the privacy notice': "Per registrarti devi accettare l'informativa privacy",
     "You're the only member: to delete the family, delete your account": "Sei l'unico membro: per eliminare la famiglia elimina l'account",
     'Sign in or sign up to accept': 'Accedi o registrati per accettare',
@@ -96,9 +96,9 @@ IT = {
     'anyone': 'chiunque',
     'Hi {name}, here is what needs attention:': 'Ciao {name}, ecco cosa ti aspetta:',
     'You can turn off these emails in the Family page of the app.': "Puoi disattivare queste email dalla pagina Famiglia dell'app.",
-    'doTrack: {n} things to remember': 'doTrack: {n} cose da ricordare',
-    'doTrack: 1 thing to remember': 'doTrack: 1 cosa da ricordare',
-    'doTrack: overdue items': 'doTrack: cose scadute',
+    'Kooka: {n} things to remember': 'Kooka: {n} cose da ricordare',
+    'Kooka: 1 thing to remember': 'Kooka: 1 cosa da ricordare',
+    'Kooka: overdue items': 'Kooka: cose scadute',
     # Lists, labels, comments
     'List not found': 'Lista non trovata',
     'Too many lists': 'Troppe liste',
@@ -142,11 +142,11 @@ IT = {
     'Too many app passwords': 'Troppe password per app',
     # Field names inside patterns
     'date': 'data', 'time': 'ora', 'end time': 'ora di fine', 'end date': 'data di fine', 'reminder time': 'ora del promemoria',
-    'Only a deadline with a date goes to paTrack': 'Solo una scadenza con la data va in paTrack',
-    'This deadline already has its document in paTrack': 'Questa scadenza ha già il suo documento in paTrack',
-    'paTrack is reached through weHub: not available here': 'paTrack si raggiunge tramite weHub: qui non è disponibile',
-    'paTrack is not reachable': 'paTrack non è raggiungibile',
-    'You do not use paTrack in this family': 'Non usi paTrack in questa famiglia',
+    'Only a deadline with a date goes to Pelican': 'Solo una scadenza con la data va in Pelican',
+    'This deadline already has its document in Pelican': 'Questa scadenza ha già il suo documento in Pelican',
+    'Pelican is reached through Wombat: not available here': 'Pelican si raggiunge tramite Wombat: qui non è disponibile',
+    'Pelican is not reachable': 'Pelican non è raggiungibile',
+    'You do not use Pelican in this family': 'Non usi Pelican in questa famiglia',
     'This app may not ask that': "Quest'app non può chiederlo",
 }
 
@@ -191,18 +191,18 @@ def label(key, lang=None):
 
 EMAILS = {
     'verify': {
-        'it': ('Conferma il tuo indirizzo email – doTrack',
+        'it': ('Conferma il tuo indirizzo email – Kooka',
                'Ciao!\n\nConferma il tuo indirizzo email aprendo questo link:\n{link}\n\n'
-               'Il link vale 3 giorni. Se non ti sei registrato su doTrack ignora questo messaggio.'),
-        'en': ('Confirm your email address – doTrack',
+               'Il link vale 3 giorni. Se non ti sei registrato su Kooka ignora questo messaggio.'),
+        'en': ('Confirm your email address – Kooka',
                'Hi!\n\nConfirm your email address by opening this link:\n{link}\n\n'
-               "The link is valid for 3 days. If you didn't sign up for doTrack, ignore this message."),
+               "The link is valid for 3 days. If you didn't sign up for Kooka, ignore this message."),
     },
     'reset': {
-        'it': ('Reimposta la password – doTrack',
+        'it': ('Reimposta la password – Kooka',
                'Per scegliere una nuova password apri questo link (vale 2 ore):\n{link}\n\n'
                'Se non hai chiesto tu il cambio password ignora questo messaggio.'),
-        'en': ('Reset your password – doTrack',
+        'en': ('Reset your password – Kooka',
                'To choose a new password open this link (valid for 2 hours):\n{link}\n\n'
                "If you didn't request a password change, ignore this message."),
     },

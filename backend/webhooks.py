@@ -1,5 +1,5 @@
 """Outgoing webhooks: on each change the family's endpoints get a JSON POST, signed with HMAC-SHA256
-(header X-doTrack-Signature: sha256=<hex of the body with the webhook's secret>)."""
+(header X-Kooka-Signature: sha256=<hex of the body with the webhook's secret>)."""
 import datetime
 import hashlib
 import hmac
@@ -16,7 +16,7 @@ def _post(hook_id, url, secret, body):
     sig = 'sha256=' + hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
     try:
         r = requests.post(url, data=body, timeout=TIMEOUT, allow_redirects=False,
-                          headers={'Content-Type': 'application/json', 'X-doTrack-Signature': sig, 'User-Agent': 'doTrack-webhook'})
+                          headers={'Content-Type': 'application/json', 'X-Kooka-Signature': sig, 'User-Agent': 'Kooka-webhook'})
         status = str(r.status_code)
     except Exception as e:
         status = 'error: ' + type(e).__name__

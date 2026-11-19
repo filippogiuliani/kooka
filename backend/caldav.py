@@ -1,7 +1,7 @@
 """CalDAV server: two-way sync with phone and desktop apps (DAVx⁵ + Tasks.org / jtx Board on Android,
 Calendar and Reminders on iPhone/Mac, Thunderbird…).
 
-Each user sees, for each family they belong to, one calendar with the items that are in no list ("doTrack")
+Each user sees, for each family they belong to, one calendar with the items that are in no list ("Kooka")
 and one calendar per list. To-dos and deadlines are VTODOs; appointments, notices and birthdays are VEVENTs.
 
 Signing in uses the email and an *app password* created in the Family page (never the account password):
@@ -383,7 +383,7 @@ def name_of(item):
 
 
 def _host():
-    return (BASE_URL or request.host_url).split('://')[-1].strip('/').split('/')[0].split(':')[0] or 'dotrack'
+    return (BASE_URL or request.host_url).split('://')[-1].strip('/').split('/')[0].split(':')[0] or 'kooka'
 
 
 def item_ics(item, labels, host):
@@ -454,7 +454,7 @@ def item_ics(item, labels, host):
 def resource(item, labels, host):
     """The full .ics of one item, and its ETag."""
     zone = local_zone()
-    lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//doTrack//CalDAV//IT', 'CALSCALE:GREGORIAN']
+    lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kooka//CalDAV//IT', 'CALSCALE:GREGORIAN']
     if item['due_time'] and item['due_date']:
         lines += vtimezone(zone, int(item['due_date'][:4]))
     lines += item_ics(item, labels, host)
@@ -487,7 +487,7 @@ def _authenticate():
                 return None
         rate_limit(f'dav:{client_ip()}', 30, 900)
     resp = Response('Authentication required', 401)
-    resp.headers['WWW-Authenticate'] = 'Basic realm="doTrack", charset="UTF-8"'
+    resp.headers['WWW-Authenticate'] = 'Basic realm="Kooka", charset="UTF-8"'
     return resp
 
 
@@ -496,11 +496,11 @@ def _base():
 
 
 def _collections(conn):
-    """[(id, name, color, family_id, list_id)] for the user: per family the "doTrack" calendar and its lists."""
+    """[(id, name, color, family_id, list_id)] for the user: per family the "Kooka" calendar and its lists."""
     out = []
     multi = len(g.families) > 1
     for f in g.families:
-        out.append((f"f{f['id']}", 'doTrack' + (f" – {f['name']}" if multi else ''), 'blue', f['id'], None))
+        out.append((f"f{f['id']}", 'Kooka' + (f" – {f['name']}" if multi else ''), 'blue', f['id'], None))
         for r in conn.execute('SELECT id, name, color FROM lists WHERE family_id = ? AND archived = 0 AND template = 0 ORDER BY position, id', (f['id'],)):
             out.append((f"l{r['id']}", r['name'] + (f" ({f['name']})" if multi else ''), r['color'], f['id'], r['id']))
     return out
@@ -656,7 +656,7 @@ def _collection_props(conn, coll, items=None):
         D + 'current-user-privilege-set': _privileges,
         D + 'supported-report-set': _reports,
         C + 'supported-calendar-component-set': _comps('VTODO', 'VEVENT'),
-        C + 'calendar-description': 'doTrack',
+        C + 'calendar-description': 'Kooka',
         CS + 'getctag': _ctag(conn, coll, items),
         IC + 'calendar-color': COLOR_HEX.get(color, '#2563EB'),
         IC + 'calendar-order': str(list_id or 0),
@@ -743,9 +743,9 @@ def root():
         return _proppatch_ok(request.path)
     if request.method != 'PROPFIND':
         if request.method in ('GET', 'HEAD'):
-            return Response('doTrack CalDAV', 200, content_type='text/plain')
+            return Response('Kooka CalDAV', 200, content_type='text/plain')
         abort(405)
-    props = {D + 'resourcetype': _children(D + 'collection'), D + 'displayname': 'doTrack',
+    props = {D + 'resourcetype': _children(D + 'collection'), D + 'displayname': 'Kooka',
              D + 'current-user-principal': _href(f"/dav/principals/{g.user['id']}/"),
              D + 'principal-URL': _href(f"/dav/principals/{g.user['id']}/"),
              C + 'calendar-home-set': _href(_base())}
@@ -781,7 +781,7 @@ def home(uid):
     if request.method != 'PROPFIND':
         abort(405)
     requested = _requested(_xml_body())
-    home_props = {D + 'resourcetype': _children(D + 'collection'), D + 'displayname': 'doTrack',
+    home_props = {D + 'resourcetype': _children(D + 'collection'), D + 'displayname': 'Kooka',
                   D + 'current-user-principal': _href(f'/dav/principals/{uid}/'), D + 'owner': _href(f'/dav/principals/{uid}/'),
                   D + 'current-user-privilege-set': _privileges}
     responses = [(_base(), *_answer(home_props, requested))]
@@ -814,7 +814,7 @@ def calendar(uid, coll):
         labels, host = _labels(conn, c[3]), _host()
         if request.method in ('GET', 'HEAD'):
             # The whole calendar as one file (handy for a quick look or a backup)
-            lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//doTrack//CalDAV//IT']
+            lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kooka//CalDAV//IT']
             lines += vtimezone(local_zone(), datetime.date.today().year)
             for it in items:
                 lines += item_ics(it, labels, host)

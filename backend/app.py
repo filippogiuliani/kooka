@@ -1,4 +1,4 @@
-"""doTrack – Flask server: JSON API under /api and the built frontend (Svelte) as static files."""
+"""Kooka – Flask server: JSON API under /api and the built frontend (Svelte) as static files."""
 import datetime
 import os
 import secrets
@@ -31,8 +31,8 @@ CSP = ("default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inlin
 
 
 def _secret_key():
-    if os.environ.get('DOTRACK_SECRET_KEY'):
-        return os.environ['DOTRACK_SECRET_KEY']
+    if os.environ.get('KOOKA_SECRET_KEY'):
+        return os.environ['KOOKA_SECRET_KEY']
     path = os.path.join(db.DATA_DIR, '.secret_key')
     if not os.path.exists(path):
         os.makedirs(db.DATA_DIR, exist_ok=True)
@@ -48,15 +48,15 @@ def create_app():
     app = Flask(__name__, static_folder=None)
     app.secret_key = _secret_key()
     app.config.update(
-        SESSION_COOKIE_NAME='dotrack_session',
+        SESSION_COOKIE_NAME='kooka_session',
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE='Lax',
-        SESSION_COOKIE_SECURE=os.environ.get('DOTRACK_COOKIE_SECURE') == '1',
+        SESSION_COOKIE_SECURE=os.environ.get('KOOKA_COOKIE_SECURE') == '1',
         PERMANENT_SESSION_LIFETIME=datetime.timedelta(days=60),
         MAX_CONTENT_LENGTH=20 * 1024 * 1024,
         JSON_AS_ASCII=False,
     )
-    if os.environ.get('DOTRACK_PROXY') == '1':
+    if os.environ.get('KOOKA_PROXY') == '1':
         # Behind a reverse proxy (nginx, Caddy, Traefik) that terminates HTTPS
         from werkzeug.middleware.proxy_fix import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
@@ -156,10 +156,10 @@ if __name__ == '__main__':
         print(f'[files] cleanup failed: {e}', flush=True)
     port = int(os.environ.get('PORT', '3001'))
     if not auth.PASSWORD_LOGIN and not oidc.PROVIDERS:
-        print('[doTrack] WARNING: password sign-in is off and no OIDC provider is configured: nobody can sign in', flush=True)
-    print(f'[doTrack] listening on http://0.0.0.0:{port} – sign-up '
+        print('[Kooka] WARNING: password sign-in is off and no OIDC provider is configured: nobody can sign in', flush=True)
+    print(f'[Kooka] listening on http://0.0.0.0:{port} – sign-up '
           f'{"open" if auth.SIGNUP_OPEN else "by invitation only"}', flush=True)
-    # trusted_proxy: with DOTRACK_PROXY=1 the real client IP comes from the proxy (used by rate limiting)
+    # trusted_proxy: with KOOKA_PROXY=1 the real client IP comes from the proxy (used by rate limiting)
     proxy = {'trusted_proxy': '*', 'trusted_proxy_headers': {'x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-host'}} \
-        if os.environ.get('DOTRACK_PROXY') == '1' else {}
+        if os.environ.get('KOOKA_PROXY') == '1' else {}
     serve(app, host='0.0.0.0', port=port, threads=8, **proxy)

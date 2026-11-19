@@ -180,7 +180,7 @@
 {:else}
   <div class="shell">
     <nav class="nav" aria-label={t('nav.sections')}>
-      <a class="logo" href="#/agenda"><img src="/icon.svg" alt="" width="28" height="28" /><span>doTrack</span></a>
+      <a class="logo" href="#/agenda"><img src="/icon.svg" alt="" width="28" height="28" /><span>Kooka</span></a>
       <div class="nav-apps hide-mobile"><AppSwitcher hub={app.me.hub} lang={language.id} label /></div>
       {#each PAGES as p (p.id)}
         <a href="#/{p.id}" class:on={section === p.id} aria-current={page === p.id ? 'page' : undefined}>
@@ -197,7 +197,7 @@
     <main class="main">
       <!-- Phone: a slim top bar so signing out is always one tap away -->
       <div class="topbar hide-desktop">
-        <a class="brand" href="#/agenda"><img src="/icon.svg" alt="" width="24" height="24" /><span>doTrack</span></a>
+        <a class="brand" href="#/agenda"><img src="/icon.svg" alt="" width="24" height="24" /><span>Kooka</span></a>
         <AppSwitcher hub={app.me.hub} lang={language.id} />
         <span class="grow"></span>
         <Bell />

@@ -1,8 +1,8 @@
-# doTrack – family organizer
+# Kooka – family organizer
 
-> **Disclaimer / Esclusione di responsabilità.** doTrack is provided *as is*, without any warranty: the authors accept **no responsibility or liability** for data loss, security problems, missed reminders, wrong information or any other consequence of using it. Read [DISCLAIMER.md](DISCLAIMER.md) before using it with real data. · Il software è fornito *così com'è*, senza garanzie: gli autori **non hanno alcuna responsabilità**. Leggi [DISCLAIMER.md](DISCLAIMER.md).
+> **Disclaimer / Esclusione di responsabilità.** Kooka is provided *as is*, without any warranty: the authors accept **no responsibility or liability** for data loss, security problems, missed reminders, wrong information or any other consequence of using it. Read [DISCLAIMER.md](DISCLAIMER.md) before using it with real data. · Il software è fornito *così com'è*, senza garanzie: gli autori **non hanno alcuna responsabilità**. Leggi [DISCLAIMER.md](DISCLAIMER.md).
 
-To-dos, deadlines and appointments shared by the family, in the same style as eaTrack.
+To-dos, deadlines and appointments shared by the family, in the same style as Wallaby.
 
 - **Agenda**: everything still open, grouped by when (overdue, today, tomorrow, next 7 days, …), by list, category,
   person or priority, with a quick-add box that understands plain words: "dentista martedì alle 15:30 #salute @Sara !"
@@ -13,7 +13,7 @@ To-dos, deadlines and appointments shared by the family, in the same style as ea
   out of the agenda; "remove ticked" clears what was bought. A *project* ("Bathroom works") groups ordinary to-dos that
   also show in the agenda and calendar. Lists can be duplicated or saved as **templates** (the packing list, reused).
 - **Shopping**: quantities ("2 kg mele", "latte x2"), grouping by supermarket aisle (guessed from the name, learned
-  when you move something), suggestions of what was bought before, drag to reorder. **eaTrack** can send the weekly
+  when you move something), suggestions of what was bought before, drag to reorder. **Wallaby** can send the weekly
   menu's foods to the list (see below).
 - **Works offline**: the app and the last data stay on the device; ticks, additions, postponing and deleting made
   offline are sent when the connection is back. Changes made by the other person show up within a few seconds.
@@ -46,32 +46,32 @@ To-dos, deadlines and appointments shared by the family, in the same style as ea
 - `backend/` – Flask API + SQLite (waitress, port 3001)
 - `frontend/` – Svelte + Vite interface, built into the Docker image
 
-> **Made with AI.** Like eaTrack, this project was written by an AI assistant (Anthropic's Claude) and checked
+> **Made with AI.** Like Wallaby, this project was written by an AI assistant (Anthropic's Claude) and checked
 > with automated tests; review it before exposing it to the internet.
 
 ## Running with Docker
 
 The code shared with the other family apps is in the `backend/famkit` submodule
 ([famkit](https://github.com/filippogiuliani/famkit)): clone with
-`git clone --recurse-submodules https://github.com/filippogiuliani/dotrack.git`, or run `git submodule update --init` in a
+`git clone --recurse-submodules https://github.com/filippogiuliani/kooka.git`, or run `git submodule update --init` in a
 clone made without it.
 
 ```sh
-cp .env.example .env    # set DOTRACK_URL, SMTP and optionally Google sign-in
+cp .env.example .env    # set KOOKA_URL, SMTP and optionally Google sign-in
 ./rebuild.sh
 ```
 
-Data lives in `./doTrack_data/` (mounted on `/app/data`): `dotrack.db`, `files/` (attachments) and `backups/`
+Data lives in `./Kooka_data/` (mounted on `/app/data`): `kooka.db`, `files/` (attachments) and `backups/`
 (one automatic database backup a day). **Back up `files/` too**: database backups don't include attachments.
 `.vapid_private.pem` is the key that signs push notifications: if it is lost a new one is created, and each device
 just has to turn notifications on again.
 
 Suggested setup for a family: sign up yourself, invite your partner from the Family page, then set
-`DOTRACK_SIGNUP=closed` so nobody else can create an account.
+`KOOKA_SIGNUP=closed` so nobody else can create an account.
 
 ### Google Calendar
-The feed is read by Google's servers, so the app must be reachable from the internet at `DOTRACK_URL`
-(e.g. behind the same reverse proxy as eaTrack). Google refreshes subscribed calendars on its own schedule,
+The feed is read by Google's servers, so the app must be reachable from the internet at `KOOKA_URL`
+(e.g. behind the same reverse proxy as Wallaby). Google refreshes subscribed calendars on its own schedule,
 usually every few hours, so changes are not instant. The address contains a secret token: whoever has it
 can read the events. It can be regenerated from the Family page.
 
@@ -80,7 +80,7 @@ consent screen for the calendar scope (in "testing" mode tokens expire every 7 d
 of that and works with every calendar app.
 
 ### Sync with phone apps (CalDAV)
-Family page → *Sync with other apps*: it shows the server address (`<DOTRACK_URL>/dav/`), the user name (the email)
+Family page → *Sync with other apps*: it shows the server address (`<KOOKA_URL>/dav/`), the user name (the email)
 and creates an **app password** per device (the account password is never used, and accounts that sign in with Google
 work too). Revoking it disconnects that device only.
 
@@ -101,7 +101,7 @@ HTTPS is required (or `localhost`).
 
 ### Sign-in, two-step verification, sessions
 - Email and password, and/or any OpenID Connect provider: Google, Microsoft, Authentik, Authelia, Keycloak, Pocket ID,
-  Zitadel… (`DOTRACK_OIDC`, see `.env.example`). With `DOTRACK_PASSWORD_LOGIN=0` sign-in and sign-up only go through
+  Zitadel… (`KOOKA_OIDC`, see `.env.example`). With `KOOKA_PASSWORD_LOGIN=0` sign-in and sign-up only go through
   the providers (configure at least one!).
 - Two-step verification (TOTP, any authenticator app) with 10 single-use recovery codes, from the Family page. It applies
   to password sign-in; OIDC sign-ins rely on the provider's own security. App passwords (CalDAV) and API tokens are
@@ -115,20 +115,20 @@ HTTPS is required (or `localhost`).
   already on the list); `GET /api/summary` returns overdue/today counts, today's appointments and what is left on each
   list (handy for a Home Assistant REST sensor; examples in the app).
 - **Webhooks** (family admin): on every change a JSON POST `{event, family_id, actor_id, at, data}` to your address,
-  signed with HMAC-SHA256 of the body in `X-doTrack-Signature: sha256=<hex>`. Events: `item.created`, `item.updated`,
+  signed with HMAC-SHA256 of the body in `X-Kooka-Signature: sha256=<hex>`. Events: `item.created`, `item.updated`,
   `item.done`, `item.reopened`, `item.deleted`, `comment.created`.
-- **eaTrack**: create a token here, then in eaTrack → Family → "Shopping with doTrack" paste doTrack's address and
+- **Wallaby**: create a token here, then in Wallaby → Family → "Shopping with Kooka" paste Kooka's address and
   the token and pick the list. The weekly plan gets a button that sends the menu's foods to that list.
 
 ### Reminder emails
-They need a working SMTP server (`DOTRACK_SMTP_*`) and a confirmed email address. They are sent after
-`DOTRACK_REMINDER_HOUR` (default 8, in `TZ`), at most once a day per user, and only when there is something to say.
+They need a working SMTP server (`KOOKA_SMTP_*`) and a confirmed email address. They are sent after
+`KOOKA_REMINDER_HOUR` (default 8, in `TZ`), at most once a day per user, and only when there is something to say.
 
 ## Administration (command line)
 ```sh
-docker exec dotrack python manage.py backup          # backup right now
-docker exec dotrack python manage.py backups         # list backups
-docker exec dotrack python manage.py users           # users and families
+docker exec kooka python manage.py backup          # backup right now
+docker exec kooka python manage.py backups         # list backups
+docker exec kooka python manage.py users           # users and families
 ```
 
 ## Development
@@ -147,9 +147,9 @@ Italian (default) and English. Interface: `frontend/src/lib/locales/`; server me
 ## License
 [MIT](LICENSE). No warranty and no liability: see [DISCLAIMER.md](DISCLAIMER.md).
 
-## weHub (one sign-in and one family for all the family apps)
-Optional. With `DOTRACK_HUB_URL` and `DOTRACK_HUB_KEY` set (see `.env.example` and weHub's README), doTrack signs people in
-only through the OIDC provider (the same Pocket ID as weHub), and takes the family from weHub: members, roles,
-people and who may use doTrack. The family, members and people become read-only here, with a link to weHub; the copy is
-refreshed every 2 minutes and keeps working if weHub is down. Existing data is adopted, not recreated: run weHub's
-**Import** once (it reads `GET /api/hub/export` with the key). A family someone had made on their own can be merged into the shared one from weHub's import (`POST /api/hub/merge`: a database backup first, then everything moves; people and labels with the same name become one). Without these settings doTrack works on its own as before.
+## Wombat (one sign-in and one family for all the family apps)
+Optional. With `KOOKA_HUB_URL` and `KOOKA_HUB_KEY` set (see `.env.example` and Wombat's README), Kooka signs people in
+only through the OIDC provider (the same Pocket ID as Wombat), and takes the family from Wombat: members, roles,
+people and who may use Kooka. The family, members and people become read-only here, with a link to Wombat; the copy is
+refreshed every 2 minutes and keeps working if Wombat is down. Existing data is adopted, not recreated: run Wombat's
+**Import** once (it reads `GET /api/hub/export` with the key). A family someone had made on their own can be merged into the shared one from Wombat's import (`POST /api/hub/merge`: a database backup first, then everything moves; people and labels with the same name become one). Without these settings Kooka works on its own as before.

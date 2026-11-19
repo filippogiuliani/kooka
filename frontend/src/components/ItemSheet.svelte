@@ -32,10 +32,10 @@
   if (noYear) form.due_date = new Date().getFullYear() + form.due_date.slice(4);
   let id = $state(start.id ?? null);
   let attachments = $state(start.attachments ?? []);
-  // paTrack (weHub mode): a deadline's document lives in the family archive
+  // Pelican (Wombat mode): a deadline's document lives in the family archive
   let extUrl = $state(start.ext_url ?? null);
-  let patrackInput = $state();
-  const usesPatrack = $derived((app.me.hub?.apps ?? []).some((a) => a.id === 'patrack'));
+  let pelicanInput = $state();
+  const usesPelican = $derived((app.me.hub?.apps ?? []).some((a) => a.id === 'pelican'));
   let saving = $state(false);
   let uploading = $state(false);
   let newCheck = $state('');
@@ -236,20 +236,20 @@
       toast(t('files.uploaded'));
     } catch (err) { showError(err); } finally { uploading = false; }
   }
-  async function toPatrack(e) {
+  async function toPelican(e) {
     const f = e.currentTarget.files?.[0];
     e.currentTarget.value = '';
     if (!f) return;
-    if (!form.title.trim() || !form.due_date) { toast(t('patrack.needs_date'), 'error'); return; }
+    if (!form.title.trim() || !form.due_date) { toast(t('pelican.needs_date'), 'error'); return; }
     uploading = true;
     try {
       await persist(); // the deadline as it is now (date, person, reminder) goes with the document
       const fd = new FormData();
       fd.append('file', f);
-      const saved = await api(`/items/${id}/to-patrack`, { method: 'POST', form: fd });
+      const saved = await api(`/items/${id}/to-pelican`, { method: 'POST', form: fd });
       extUrl = saved.ext_url;
       upsert(saved);
-      toast(t('patrack.sent'));
+      toast(t('pelican.sent'));
     } catch (err) { showError(err); } finally { uploading = false; }
   }
   async function removeFile(a) {
@@ -534,17 +534,17 @@
         <button class="btn soft sm hide-desktop" disabled={uploading} onclick={() => cameraInput.click()}><Icon name="camera" size={16} />{t('files.photo')}</button>
         <span class="tiny muted">{t('files.limits')}</span>
       </div>
-      {#if form.kind === 'deadline' && (extUrl || usesPatrack)}
-        <div class="patrack">
+      {#if form.kind === 'deadline' && (extUrl || usesPelican)}
+        <div class="pelican">
           {#if extUrl}
-            <a class="btn soft sm" href={extUrl} target="_blank" rel="noopener"><img src={appIcons.patrack} alt="" width="18" height="18" />{t('patrack.open')}</a>
-            <span class="tiny muted">{t('patrack.kept_in_step')}</span>
+            <a class="btn soft sm" href={extUrl} target="_blank" rel="noopener"><img src={appIcons.pelican} alt="" width="18" height="18" />{t('pelican.open')}</a>
+            <span class="tiny muted">{t('pelican.kept_in_step')}</span>
           {:else}
-            <input bind:this={patrackInput} class="sr-only" type="file" onchange={toPatrack}
+            <input bind:this={pelicanInput} class="sr-only" type="file" onchange={toPelican}
                    accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.txt,.doc,.docx,.odt,.xls,.xlsx,.csv,.zip,.dcm" />
-            <button class="btn soft sm" disabled={uploading || !app.online} onclick={() => patrackInput.click()}>
-              <img src={appIcons.patrack} alt="" width="18" height="18" />{t('patrack.archive')}</button>
-            <span class="tiny muted">{t('patrack.archive_note')}</span>
+            <button class="btn soft sm" disabled={uploading || !app.online} onclick={() => pelicanInput.click()}>
+              <img src={appIcons.pelican} alt="" width="18" height="18" />{t('pelican.archive')}</button>
+            <span class="tiny muted">{t('pelican.archive_note')}</span>
           {/if}
         </div>
       {/if}
@@ -601,8 +601,8 @@
 </Sheet>
 
 <style>
-  .patrack { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
-  .patrack img { border-radius: 4px; }
+  .pelican { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .pelican img { border-radius: 4px; }
   .seg button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
   .kinds { flex-wrap: wrap; }
   .kinds button { flex: 1 1 auto; }

@@ -1,9 +1,9 @@
-// doTrack service worker: push notifications, and the app itself kept on the device so it opens offline.
+// Kooka service worker: push notifications, and the app itself kept on the device so it opens offline.
 // The page (index.html) always comes from the network when there is one, so a new version shows at once;
 // built files have a hash in their name and never change, so they are served from the cache; the manifest and the
 // icons come from the network too (a new icon must reach the phone), the saved copy only offline.
 // Data is not cached here: the app keeps its own copy (see lib/store.svelte.js).
-const CACHE = 'dotrack-app-v2';
+const CACHE = 'kooka-app-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(['/', '/icon.svg', '/manifest.webmanifest'])).catch(() => {}));
@@ -60,7 +60,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data?.text() }; }
-  event.waitUntil(self.registration.showNotification(data.title || 'doTrack', {
+  event.waitUntil(self.registration.showNotification(data.title || 'Kooka', {
     body: data.body || '',
     tag: data.tag,
     renotify: !!data.tag,
@@ -70,7 +70,7 @@ self.addEventListener('push', (event) => {
   }));
 });
 
-// Tap on a notification: focus an open doTrack window (and show the item there) or open a new one
+// Tap on a notification: focus an open Kooka window (and show the item there) or open a new one
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   const url = new URL(event.notification.data?.url || '/', self.location.origin).href;

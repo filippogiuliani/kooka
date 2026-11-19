@@ -7,7 +7,7 @@ export const LANGUAGES = [
   { id: 'en', name: 'English' },
 ];
 const DICTIONARIES = { it, en };
-const STORAGE_KEY = 'dotrack.language';
+const STORAGE_KEY = 'kooka.language';
 
 export const DEFAULT_LANGUAGE = 'it';
 // Browser preferences, e.g. ['pt-BR', 'pt', 'en-US']

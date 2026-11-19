@@ -3,7 +3,7 @@
 - Two-step verification (TOTP, RFC 6238) with single-use recovery codes. It applies to password sign-in;
   external providers (OIDC) have their own, and app passwords / API tokens are separate revocable keys.
 - "Sign out everywhere else".
-- Personal API tokens (Authorization: Bearer dt_…) for Home Assistant, eaTrack, scripts.
+- Personal API tokens (Authorization: Bearer dt_…) for Home Assistant, Wallaby, scripts.
 - Family webhooks (admin) and a small summary endpoint for dashboards."""
 import base64
 import hashlib
@@ -24,7 +24,7 @@ from common import body, text
 
 bp = Blueprint('security', __name__)
 
-ISSUER = 'doTrack'
+ISSUER = 'Kooka'
 RECOVERY_CODES = 10
 
 

@@ -42,7 +42,7 @@ def public_key():
 
 def _contact():
     from auth import BASE_URL
-    sender = os.environ.get('DOTRACK_MAIL_FROM', '')
+    sender = os.environ.get('KOOKA_MAIL_FROM', '')
     if '<' in sender and '>' in sender:
         sender = sender.split('<', 1)[1].split('>', 1)[0]
     if '@' in sender:
